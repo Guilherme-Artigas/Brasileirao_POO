@@ -5,7 +5,6 @@ import chaiHttp = require('chai-http');
 
 import { app } from '../app';
 import TeamModel from '../database/models/TeamModel';
-// import IdErrorHandling from "../midd/IdNotFound";
 
 chai.use(chaiHttp);
 

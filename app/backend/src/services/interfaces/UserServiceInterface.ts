@@ -1,3 +1,3 @@
 export default interface IUserService {
-  loginUser(email: string): Promise<string>;
+  loginUser(email: string, password: string): Promise<string | boolean>;
 }

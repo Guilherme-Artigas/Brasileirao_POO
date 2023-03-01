@@ -9,8 +9,11 @@ export default class UserController {
   }
 
   async userLogin(req: Request, res: Response) {
-    const { email } = req.body;
-    const result = await this._service.loginUser(email);
-    return res.status(201).json(result);
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(400).json({ message: 'All fields must be filled' });
+    }
+    const result = await this._service.loginUser(email, password);
+    return res.status(200).json({ token: result });
   }
 }
