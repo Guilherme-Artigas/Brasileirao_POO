@@ -23,18 +23,11 @@ describe('Testes de Integração da rota /teams', () => {
     expect(result.body).to.be.deep.equal(mockTeamsList);
   });
 
-  // it('Verifica se é possível buscar times pelo ID', async () => {
-  //   const mockTeam = { id: 1, teamName: 'corinthians' } as TeamModel;
-  //   sinon.stub(TeamModel, 'findOne').resolves(mockTeam);
-  //   const result = await chai.request(app).get('/teams/1');
-  //   expect(result.status).to.be.equal(200);
-  //   expect(result.body).to.be.deep.equal(mockTeam);
-  // });
-
-  // it('Verifica se retorna 404, para IDs inexistentes', async () => {
-  //   const error = new IdErrorHandling('ID não encontrado') as TeamModel;
-  //   sinon.stub(TeamModel, 'findOne').resolves(null);
-  //   const result = await chai.request(app).get('/teams/35');
-  //   expect(result).to.be.equal(Error);
-  // });
+  it('Verifica se é possível buscar times pelo ID', async () => {
+    const mockTeam = { id: 1, teamName: 'corinthians' } as TeamModel;
+    sinon.stub(TeamModel, 'findOne').resolves(mockTeam);
+    const result = await chai.request(app).get('/teams/1');
+    expect(result.status).to.be.equal(200);
+    expect(result.body).to.be.deep.equal(mockTeam);
+  });
 });
