@@ -66,14 +66,4 @@ describe('Testes de integração da rota /login', () => {
     expect(response.status).to.be.equal(200);
     expect(response.body).to.be.deep.equal({ role: user.role });
   });
-
-  // it('Verifica se o Token passado é inválido', async () => {
-  //   const token = generateToken({ id: 1, role: 'admin' });
-  //   const mockLoginUser = { req: { headers: { authorization: `${token}c` } } };
-  //   const user = verify(mockLoginUser.req.headers.authorization, 'jwt_secret') as IJwt;
-  //   const response = await chai.request(app).get('/login/role').set({authorization: token}).send(mockLoginUser);
-  //
-  //   expect(response.status).to.be.equal(401);
-  //   expect(response.body).to.be.deep.equal({ message: 'Token must be a valid token' });
-  // });
 });
