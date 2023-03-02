@@ -1,6 +1,8 @@
+import 'express-async-errors';
 import * as express from 'express';
 import teamRoutes from './routes/TeamRoutes';
 import userRoutes from './routes/UserRoutes';
+import ErrorHandler from './middlewares/ErrorHandler';
 
 class App {
   public app: express.Express;
@@ -16,6 +18,8 @@ class App {
     this.app.use('/teams', teamRoutes);
 
     this.app.use('/login', userRoutes);
+
+    this.app.use(ErrorHandler.handle);
   }
 
   private config():void {
