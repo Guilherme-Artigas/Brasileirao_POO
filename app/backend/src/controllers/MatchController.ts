@@ -15,7 +15,7 @@ export default class MatchController {
       result = await this._service.getAllMatches();
       return res.status(200).json(result);
     }
-    result = await this._service.checkAllMatches(inProgress as string | undefined);
+    result = await this._service.checkAllMatches(inProgress as string);
     return res.status(200).json(result);
   }
 }
