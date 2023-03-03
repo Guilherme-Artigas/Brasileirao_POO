@@ -16,19 +16,28 @@ export default class MatchService implements IMatchService {
     const result = await this.model.findAll(
       {
         include: [
-          {
-            model: TeamModel,
-            as: 'homeTeam',
-            attributes: { exclude: ['id'] },
-          },
-          {
-            model: TeamModel,
-            as: 'awayTeam',
-            attributes: { exclude: ['id'] },
-          },
+          { model: TeamModel, as: 'homeTeam', attributes: { exclude: ['id'] } },
+          { model: TeamModel, as: 'awayTeam', attributes: { exclude: ['id'] } },
         ],
       },
     );
+    return result;
+  }
+
+  async checkAllMatches(progress: string | undefined): Promise<IMatch[]> {
+    let a;
+    if (typeof progress === 'string') a = progress.includes('true');
+    console.log(progress);
+    const result = await this.model.findAll(
+      {
+        include: [
+          { model: TeamModel, as: 'homeTeam', attributes: { exclude: ['id'] } },
+          { model: TeamModel, as: 'awayTeam', attributes: { exclude: ['id'] } },
+        ],
+        where: { inProgress: a || '' },
+      },
+    );
+    console.log(result);
     return result;
   }
 }
