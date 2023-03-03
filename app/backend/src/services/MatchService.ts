@@ -36,4 +36,12 @@ export default class MatchService implements IMatchService {
     );
     return result;
   }
+
+  async finishMatch(id: number): Promise<string> {
+    await this.model.update(
+      { inProgress: false },
+      { where: { id } },
+    );
+    return 'Finished';
+  }
 }

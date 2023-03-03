@@ -8,6 +8,11 @@ const matchService = new MatchService();
 
 const matchController = new MatchController(matchService);
 
+matchRoutes.patch(
+  '/:id/finish',
+  (req: Request, res: Response) => matchController.finishMatch(req, res),
+);
+
 matchRoutes.get(
   '/',
   (req: Request, res: Response) => matchController.getAllMatches(req, res),
