@@ -1,0 +1,34 @@
+import { ModelStatic } from 'sequelize';
+import MatchModel from '../database/models/MatchModel';
+import TeamModel from '../database/models/TeamModel';
+
+import IMatchService from './interfaces/IMatchService';
+import IMatch from '../interfaces/IMatch';
+
+export default class MatchService implements IMatchService {
+  protected model: ModelStatic<MatchModel>;
+
+  constructor() {
+    this.model = MatchModel;
+  }
+
+  async getAllMatches(): Promise<IMatch[]> {
+    const result = await this.model.findAll(
+      {
+        include: [
+          {
+            model: TeamModel,
+            as: 'homeTeam',
+            attributes: { exclude: ['id'] },
+          },
+          {
+            model: TeamModel,
+            as: 'awayTeam',
+            attributes: { exclude: ['id'] },
+          },
+        ],
+      },
+    );
+    return result;
+  }
+}
