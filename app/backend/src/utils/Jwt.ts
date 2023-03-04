@@ -2,7 +2,7 @@ import 'dotenv';
 import { SignOptions, sign } from 'jsonwebtoken';
 import IJwt from '../interfaces/JwtInterface';
 
-const secret = process.env.JWT_SECRET || 'jwt_secret';
+const secret = process.env.JWT_SECRET as string;
 const generateToken = (payload: IJwt): string => {
   const config: SignOptions = {
     expiresIn: '3d',

@@ -14,7 +14,7 @@ describe('Testes de Integração da rota /teams', () => {
 
   afterEach(() => sinon.restore());
 
-  it('Verifica se é possível obter a lista de todos os times através do método GET, na rota /teams', async () => {
+  it('Busca lista completa de times...', async () => {
     const mockTeamsList = [{ id: 1, teamName: 'corinthians' }] as TeamModel[];
     sinon.stub(TeamModel, 'findAll').resolves(mockTeamsList);
     const result = await chai.request(app).get('/teams');
@@ -22,7 +22,7 @@ describe('Testes de Integração da rota /teams', () => {
     expect(result.body).to.be.deep.equal(mockTeamsList);
   });
 
-  it('Verifica se é possível buscar times pelo ID', async () => {
+  it('Busca times pelo ID...', async () => {
     const mockTeam = { id: 1, teamName: 'corinthians' } as TeamModel;
     sinon.stub(TeamModel, 'findOne').resolves(mockTeam);
     const result = await chai.request(app).get('/teams/1');

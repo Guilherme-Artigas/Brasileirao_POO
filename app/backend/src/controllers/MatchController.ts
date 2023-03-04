@@ -27,7 +27,7 @@ export default class MatchController {
     const { params: { id }, headers: { authorization } } = req;
     if (!authorization) throw new Unauthorized('Token not found');
     try {
-      const secret = process.env.JWT_SECRET || 'jwt_secret;';
+      const secret = process.env.JWT_SECRET as string;
       verify(authorization, secret);
       const result = await this._service.finishMatch(parseInt(id, 10));
       return res.status(200).json(result);

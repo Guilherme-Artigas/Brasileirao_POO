@@ -16,7 +16,7 @@ describe('Testes de integração da rota /login', () => {
 
   afterEach(() => sinon.restore());
 
-  it('Verifica se usuário obtem token ao logar com dados corretos', async () => {
+  it('Gera Token...', async () => {
     const mockLoginUser = { email: 'user@user.com', password: 'secret_password' } as UserModel;
     const mockHash = hashSync(mockLoginUser.password);
     const mockResult = { id: 2, userName: 'User', role: 'user', email: 'user@user.com', password: mockHash } as UserModel;
@@ -31,7 +31,7 @@ describe('Testes de integração da rota /login', () => {
     expect(response.body.token).to.be.equal(token);
   });
 
-  it('Verifica se retorna mensagem de erro, caso email ou password não seja informado no login', async () => {
+  it('Mensagem de erro, caso requisição não possua email ou senha...', async () => {
     const mockLoginUser = { password: 'qualquerCoisa' };
     const response = await chai.request(app).post('/login').send(mockLoginUser);
 
@@ -39,7 +39,7 @@ describe('Testes de integração da rota /login', () => {
     expect(response.body).to.be.deep.equal({ message: 'All fields must be filled' });
   });
 
-  it('Verifica se retorna erro quando passado algum email não cadastrado no banco', async () => {
+  it('Mensagem de erro, caso email informado naõ esteja cadastrado no banco de dados...', async () => {
     const mockLoginUser = { email: 'userMock@user.com', password: '123456789' };
 
     sinon.stub(UserModel, 'findOne').resolves(undefined);
@@ -49,7 +49,7 @@ describe('Testes de integração da rota /login', () => {
     expect(response.body).to.be.deep.equal({ message: 'Invalid email or password' });
   });
 
-  it('Verifica se está sendo passado um Token na requisição', async () => {
+  it('Existe token na requisição...', async () => {
     const mockLoginUser = { req: { headers: { authorization: '' } } };
     const response = await chai.request(app).get('/login/role').send(mockLoginUser);
 
@@ -57,7 +57,7 @@ describe('Testes de integração da rota /login', () => {
     expect(response.body).to.be.deep.equal({ message: 'Token not found' });
   });
 
-  it('Verifica se o Token passado é valido', async () => {
+  it('Token informado é válido...', async () => {
     const token = generateToken({ id: 1, role: 'admin' });
     const mockLoginUser = { req: { headers: { authorization: token } } };
     const user = verify(mockLoginUser.req.headers.authorization, 'jwt_secret') as IJwt;
@@ -65,5 +65,16 @@ describe('Testes de integração da rota /login', () => {
 
     expect(response.status).to.be.equal(200);
     expect(response.body).to.be.deep.equal({ role: user.role });
+  });
+
+  it('Mensagem de erro, para token inválido...', async () => {
+    const token = generateToken({ id: 5, role: 'user' });
+    const mockLoginUser = { req: { headers: { authorization: `${token}5` } } };
+    const response = await chai.request(app)
+      .get('/login/role')
+      .set({authorization: 'aa' })
+      .send(mockLoginUser);
+
+    expect(response.status).to.be.equal(401);
   });
 });
