@@ -5,6 +5,9 @@ import IMatchService from '../services/MatchService';
 import Unauthorized from '../middlewares/errors/Unauthorized';
 import InvalidToken from '../middlewares/errors/InvalidToken';
 
+const TOKEN_NOT_FOUND = 'Token not found';
+const INVALID_TOKEN = 'Token must be a valid token';
+
 export default class MatchController {
   private _service: IMatchService;
 
@@ -25,27 +28,40 @@ export default class MatchController {
 
   async finishMatch(req: Request, res: Response) {
     const { params: { id }, headers: { authorization } } = req;
-    if (!authorization) throw new Unauthorized('Token not found');
+    if (!authorization) throw new Unauthorized(TOKEN_NOT_FOUND);
     try {
       const SECRET = process.env.JWT_SECRET as string;
       verify(authorization, SECRET);
       const result = await this._service.finishMatch(parseInt(id, 10));
       return res.status(200).json(result);
     } catch (err) {
-      throw new InvalidToken('Token must be a valid token');
+      throw new InvalidToken(INVALID_TOKEN);
     }
   }
 
-  async updateMatchesInProgress(req: Request, res: Response) {
+  async upMatchesInProgress(req: Request, res: Response) {
     const { params: { id }, headers: { authorization }, body } = req;
-    if (!authorization) throw new Unauthorized('Token not found');
+    if (!authorization) throw new Unauthorized(TOKEN_NOT_FOUND);
     try {
       const SECRET = process.env.JWT_SECRET as string;
       verify(authorization, SECRET);
-      const result = await this._service.updateMatchesInProgress(parseInt(id, 10), body);
+      const result = await this._service.upMatchesInProgress(parseInt(id, 10), body);
       return res.status(200).json(result);
     } catch (e) {
-      throw new InvalidToken('Token must be a valid token');
+      throw new InvalidToken(INVALID_TOKEN);
+    }
+  }
+
+  async createMatches(req: Request, res: Response) {
+    const { headers: { authorization }, body } = req;
+    if (!authorization) throw new Unauthorized(TOKEN_NOT_FOUND);
+    try {
+      const SECRET = process.env.JWT_SECRET as string;
+      verify(authorization, SECRET);
+      const result = await this._service.createMatches(body);
+      return res.status(201).json(result);
+    } catch (e) {
+      throw new InvalidToken(INVALID_TOKEN);
     }
   }
 }

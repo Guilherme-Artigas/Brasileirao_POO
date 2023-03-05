@@ -4,7 +4,9 @@ import TeamModel from '../database/models/TeamModel';
 
 import IMatchService from './interfaces/IMatchService';
 import IMatch from '../interfaces/IMatch';
-import IUpdateMatchesProgress from '../interfaces/IUpdateMatchesProgress';
+import IUpMatchesProgress from '../interfaces/IUpdateMatchesProgress';
+import ICreateMatches from '../interfaces/ICreateMatches';
+import IResponseCreateMatches from '../interfaces/IResponseCreateMatches';
 
 export default class MatchService implements IMatchService {
   protected model: ModelStatic<MatchModel>;
@@ -46,14 +48,16 @@ export default class MatchService implements IMatchService {
     return 'Finished';
   }
 
-  async updateMatchesInProgress(
-    id: number,
-    body: IUpdateMatchesProgress,
-  ): Promise<IUpdateMatchesProgress> {
+  async upMatchesInProgress(id: number, body: IUpMatchesProgress): Promise<IUpMatchesProgress> {
     await this.model.update(
       { homeTeamGoals: body.homeTeamGoals, awayTeamGoals: body.awayTeamGoals },
       { where: { id } },
     );
     return { ...body };
+  }
+
+  async createMatches(body: ICreateMatches): Promise<IResponseCreateMatches> {
+    const result = await this.model.create({ ...body, inProgress: true });
+    return result;
   }
 }

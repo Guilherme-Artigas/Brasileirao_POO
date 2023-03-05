@@ -10,7 +10,7 @@ const matchController = new MatchController(matchService);
 
 matchRoutes.patch(
   '/:id',
-  (req: Request, res: Response) => matchController.updateMatchesInProgress(req, res),
+  (req: Request, res: Response) => matchController.upMatchesInProgress(req, res),
 );
 
 matchRoutes.patch(
@@ -21,6 +21,11 @@ matchRoutes.patch(
 matchRoutes.get(
   '/',
   (req: Request, res: Response) => matchController.getAllMatches(req, res),
+);
+
+matchRoutes.post(
+  '/',
+  (req: Request, res: Response) => matchController.createMatches(req, res),
 );
 
 export default matchRoutes;

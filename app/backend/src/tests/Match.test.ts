@@ -111,7 +111,7 @@ describe('Testes de integração da rota /matches', () => {
   it('Não é possível atualizar partidas com token inválido', async () => {
     const response = await chai.request(app)
       .patch('/matches/:id')
-      .set({ authorization: 'hansbgf6' })
+      .set({ authorization: 'asds' })
       .send();
 
     expect(response.status).to.be.equal(401);
@@ -120,6 +120,40 @@ describe('Testes de integração da rota /matches', () => {
   it('Não é possível atualizar partidas sem token', async () => {
     const response = await chai.request(app)
       .patch('/matches/:id')
+      .set({ authorization: '' })
+      .send();
+
+    expect(response.status).to.be.equal(401);
+  });
+
+  it('É possível criar uma partida com todas as informações corretas...', async () => {
+    const token = generateToken({ id: 12, role: 'user' });
+    const mockInput = { homeTeamId: 1, awayTeamId: 2, homeTeamGoals: 0, awayTeamGoals: 3 };
+    const mockOutPut = { id: 50, ...mockInput, inProgress: true } as MatchModel;
+
+    sinon.stub(MatchModel, 'create').resolves(mockOutPut);
+
+    const response = await chai.request(app)
+      .post('/matches')
+      .set({ authorization: token })
+      .send(mockInput);
+
+    expect(response.status).to.be.equal(201);
+    expect(response.body).to.be.deep.equal(mockOutPut);
+  });
+
+  it('Mensagem de erro, quando token inválido... (criar partidas)', async () => {
+    const response = await chai.request(app)
+      .post('/matches')
+      .set({ authorization: 'asds' })
+      .send();
+
+    expect(response.status).to.be.equal(401);
+  });
+
+  it('Mensagem de erro, quando não existe token... (criar partidas)', async () => {
+    const response = await chai.request(app)
+      .post('/matches')
       .set({ authorization: '' })
       .send();
 
