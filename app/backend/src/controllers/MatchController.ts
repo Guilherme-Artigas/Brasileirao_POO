@@ -27,11 +27,24 @@ export default class MatchController {
     const { params: { id }, headers: { authorization } } = req;
     if (!authorization) throw new Unauthorized('Token not found');
     try {
-      const secret = process.env.JWT_SECRET as string;
-      verify(authorization, secret);
+      const SECRET = process.env.JWT_SECRET as string;
+      verify(authorization, SECRET);
       const result = await this._service.finishMatch(parseInt(id, 10));
       return res.status(200).json(result);
     } catch (err) {
+      throw new InvalidToken('Token must be a valid token');
+    }
+  }
+
+  async updateMatchesInProgress(req: Request, res: Response) {
+    const { params: { id }, headers: { authorization }, body } = req;
+    if (!authorization) throw new Unauthorized('Token not found');
+    try {
+      const SECRET = process.env.JWT_SECRET as string;
+      verify(authorization, SECRET);
+      const result = await this._service.updateMatchesInProgress(parseInt(id, 10), body);
+      return res.status(200).json(result);
+    } catch (e) {
       throw new InvalidToken('Token must be a valid token');
     }
   }

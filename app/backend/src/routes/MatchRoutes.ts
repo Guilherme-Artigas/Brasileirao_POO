@@ -9,6 +9,11 @@ const matchService = new MatchService();
 const matchController = new MatchController(matchService);
 
 matchRoutes.patch(
+  '/:id',
+  (req: Request, res: Response) => matchController.updateMatchesInProgress(req, res),
+);
+
+matchRoutes.patch(
   '/:id/finish',
   (req: Request, res: Response) => matchController.finishMatch(req, res),
 );

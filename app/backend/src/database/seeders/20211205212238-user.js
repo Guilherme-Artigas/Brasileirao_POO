@@ -12,15 +12,15 @@ module.exports = {
         username: 'User',
         role: 'user',
         email: 'user@user.com',
-        password: '$2a$08$Y8Abi8jXvsXyqm.rmp0B.uQBA5qUz7T6Ghlg/CvVr/gLxYj5UAZVO', 
+        password: '$2a$08$Y8Abi8jXvsXyqm.rmp0B.uQBA5qUz7T6Ghlg/CvVr/gLxYj5UAZVO',
           // senha: secret_user
       },
-      // os logins abaixo são intencionalmente inválidos, pois serão usados nos testes
+      // os 'logins' abaixo são intencionalmente inválidos, pois serão usados nos testes
       {
         username: 'User',
         role: 'user',
         email: '@user.com',
-        password: '$2a$08$Y8Abi8jXvsXyqm.rmp0B.uQBA5qUz7T6Ghlg/CvVr/gLxYj5UAZVO', 
+        password: '$2a$08$Y8Abi8jXvsXyqm.rmp0B.uQBA5qUz7T6Ghlg/CvVr/gLxYj5UAZVO',
           // senha: secret_user
       },
       {
