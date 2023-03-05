@@ -26,8 +26,11 @@ describe('Testes de integração da rota /matches', () => {
         inProgress: false,
       },
     ] as MatchModel[];
+
     sinon.stub(MatchModel, 'findAll').resolves(mockMatches);
+
     const response = await chai.request(app).get('/matches');
+
     expect(response.status).to.be.equal(200);
     expect(response.body).to.be.deep.equal(mockMatches);
   });
@@ -44,7 +47,9 @@ describe('Testes de integração da rota /matches', () => {
         inProgress: true,
       },
     ] as MatchModel[];
+
     sinon.stub(MatchModel, 'findAll').resolves(mockResponse);
+
     const response = await chai.request(app)
       .get('/matches')
       .query({ inProgress: 'true' })
@@ -63,7 +68,7 @@ describe('Testes de integração da rota /matches', () => {
 
   it('É possível finalizar uma partida com as informações válidas...', async () => {
     const token = generateToken({ id: 1, role: 'user' });
-    const mockRequest = { req: { params: { id: 1 } }, headers: { authorization: `${token}1` } };
+    const mockRequest = { req: { params: { id: 1 } }, headers: { authorization: `${token}` } };
 
     sinon.stub(MatchModel, 'update').resolves();
 
@@ -83,6 +88,40 @@ describe('Testes de integração da rota /matches', () => {
       .patch('/matches/:id/finish')
       .set({authorization: 'aa' })
       .send(mockLoginUser);
+
+    expect(response.status).to.be.equal(401);
+  });
+
+  it('É possível atualizar uma partida em andamento', async () => {
+    const token = generateToken({ id: 10, role: 'user' });
+    const mockPayload = { homeTeamGoals: 3, awayTeamGoals: 1 };
+    const mockRequest = { req: { headers: { authorization: token }, params: { id: 2 }, body: mockPayload } };
+
+    sinon.stub(MatchModel, 'update').resolves();
+
+    const response = await chai.request(app)
+      .patch('/matches/:id')
+      .set({ authorization: token })
+      .send(mockRequest.req.body);
+
+    expect(response.status).to.be.equal(200);
+    expect(response.body).to.be.deep.equal({ ...mockPayload });
+  });
+
+  it('Não é possível atualizar partidas com token inválido', async () => {
+    const response = await chai.request(app)
+      .patch('/matches/:id')
+      .set({ authorization: 'hansbgf6' })
+      .send();
+
+    expect(response.status).to.be.equal(401);
+  });
+
+  it('Não é possível atualizar partidas sem token', async () => {
+    const response = await chai.request(app)
+      .patch('/matches/:id')
+      .set({ authorization: '' })
+      .send();
 
     expect(response.status).to.be.equal(401);
   });
