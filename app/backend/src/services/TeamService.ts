@@ -4,19 +4,19 @@ import ITeam from '../interfaces/TeamInterface';
 import ITeamService from './interfaces/TeamServiceInterface';
 
 export default class TeamService implements ITeamService {
-  protected model: ModelStatic<TeamModel>;
+  protected teamModel: ModelStatic<TeamModel>;
 
   constructor() {
-    this.model = TeamModel;
+    this.teamModel = TeamModel;
   }
 
   async getAllTeams(): Promise<ITeam[]> {
-    const result = await this.model.findAll();
+    const result = await this.teamModel.findAll();
     return result;
   }
 
   async getTeamById(id: number): Promise<ITeam> {
-    const result = await this.model.findOne({ where: { id } });
+    const result = await this.teamModel.findByPk(id);
     return result as ITeam;
   }
 }

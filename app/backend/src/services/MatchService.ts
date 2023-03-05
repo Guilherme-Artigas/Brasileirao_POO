@@ -7,16 +7,20 @@ import IMatch from '../interfaces/IMatch';
 import IUpMatchesProgress from '../interfaces/IUpdateMatchesProgress';
 import ICreateMatches from '../interfaces/ICreateMatches';
 import IResponseCreateMatches from '../interfaces/IResponseCreateMatches';
+import EqualOpponents from '../middlewares/errors/EqualOpponents';
+import TeamNotFound from '../middlewares/errors/TeamNotFound';
 
 export default class MatchService implements IMatchService {
-  protected model: ModelStatic<MatchModel>;
+  protected matchModel: ModelStatic<MatchModel>;
+  protected teamModel: ModelStatic<TeamModel>;
 
   constructor() {
-    this.model = MatchModel;
+    this.matchModel = MatchModel;
+    this.teamModel = TeamModel;
   }
 
   async getAllMatches(): Promise<IMatch[]> {
-    const result = await this.model.findAll(
+    const result = await this.matchModel.findAll(
       {
         include: [
           { model: TeamModel, as: 'homeTeam', attributes: { exclude: ['id'] } },
@@ -28,7 +32,7 @@ export default class MatchService implements IMatchService {
   }
 
   async checkAllMatches(progress: string): Promise<IMatch[]> {
-    const result = await this.model.findAll(
+    const result = await this.matchModel.findAll(
       {
         include: [
           { model: TeamModel, as: 'homeTeam', attributes: { exclude: ['id'] } },
@@ -41,7 +45,7 @@ export default class MatchService implements IMatchService {
   }
 
   async finishMatch(id: number): Promise<string> {
-    await this.model.update(
+    await this.matchModel.update(
       { inProgress: false },
       { where: { id } },
     );
@@ -49,7 +53,7 @@ export default class MatchService implements IMatchService {
   }
 
   async upMatchesInProgress(id: number, body: IUpMatchesProgress): Promise<IUpMatchesProgress> {
-    await this.model.update(
+    await this.matchModel.update(
       { homeTeamGoals: body.homeTeamGoals, awayTeamGoals: body.awayTeamGoals },
       { where: { id } },
     );
@@ -57,7 +61,13 @@ export default class MatchService implements IMatchService {
   }
 
   async createMatches(body: ICreateMatches): Promise<IResponseCreateMatches> {
-    const result = await this.model.create({ ...body, inProgress: true });
+    if (body.homeTeamId === body.awayTeamId) {
+      throw new EqualOpponents('It is not possible to create a match with two equal teams');
+    }
+    const homeTeamFound = await this.teamModel.findByPk(body.homeTeamId);
+    const awayTeamFound = await this.teamModel.findByPk(body.awayTeamId);
+    if (!homeTeamFound || !awayTeamFound) throw new TeamNotFound('There is no team with such id!');
+    const result = await this.matchModel.create({ ...body, inProgress: true });
     return result;
   }
 }
