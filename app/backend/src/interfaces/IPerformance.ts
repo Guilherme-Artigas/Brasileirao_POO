@@ -7,4 +7,6 @@ export default interface IPerformance {
   totalLosses: number;
   goalsFavor: number;
   goalsOwn: number;
+
+  goalsBalance: number;
 }
